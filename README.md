@@ -8,4 +8,8 @@ New-Item -ItemType File sad_app\generated\__init__.py -Force | Out-Null
 
 python .\sad_app\seed_cities.py
 
+python -m sad_app.seed_cities.py
+
 python .\sad_app\server.py
+
+python -m sad_app.server
