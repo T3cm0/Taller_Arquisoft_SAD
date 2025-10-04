@@ -1,0 +1,6 @@
+grpcio
+grpcio-tools
+motor
+pydantic
+python-dotenv
+uvloop

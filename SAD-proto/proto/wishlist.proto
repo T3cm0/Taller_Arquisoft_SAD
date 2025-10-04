@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package wishlist;
+
+message Empty {}
+
+message User {
+  string id = 1;            // UUID en SAD
+  string nombre = 2;
+  string apellido = 3;
+  map<string, string> extra = 4; // datos extra (clave/valor)
+}
+
+message CreateUserRequest {
+  string nombre = 1;
+  string apellido = 2;
+  map<string, string> extra = 3;
+}
+
+message GetUserRequest { string id = 1; }
+
+message UpsertUserRequest {
+  string id = 1; // si viene vacío, crea; si viene, actualiza
+  string nombre = 2;
+  string apellido = 3;
+  map<string, string> extra = 4;
+}
+
+message UserResponse { User user = 1; }
+
+message Wish {
+  string id = 1;           // UUID
+  string user_id = 2;
+  string titulo = 3;
+  string descripcion = 4;
+  string pais = 5;         // ISO code o nombre
+  string ciudad = 6;       // debe existir en base ciudades para autocomplete
+  int64  creado_en = 7;    // epoch millis
+}
+
+message CreateWishRequest {
+  string user_id = 1;
+  string titulo = 2;
+  string descripcion = 3;
+  string pais = 4;
+  string ciudad = 5;
+}
+
+message WishResponse { Wish wish = 1; }
+
+message ListWishesByUserRequest { string user_id = 1; }
+message ListWishesResponse { repeated Wish items = 1; }
+
+message AutocompleteCityRequest {
+  string pais = 1;     // opcional: si vacío, busca global
+  string query = 2;    // prefijo texto
+  int32 limit = 3;     // default 10
+}
+
+message City {
+  string pais = 1;
+  string ciudad = 2;
+}
+
+message AutocompleteCityResponse {
+  repeated City items = 1;
+}
+
+service DataAdminService {
+  rpc CreateUser(CreateUserRequest) returns (UserResponse);
+  rpc UpsertUser(UpsertUserRequest) returns (UserResponse);
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+
+  rpc CreateWish(CreateWishRequest) returns (WishResponse);
+  rpc ListWishesByUser(ListWishesByUserRequest) returns (ListWishesResponse);
+
+  rpc AutocompleteCity(AutocompleteCityRequest) returns (AutocompleteCityResponse);
+
+  rpc Ping(Empty) returns (Empty);
+}
