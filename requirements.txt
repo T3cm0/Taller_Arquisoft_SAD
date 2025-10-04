@@ -3,4 +3,4 @@ grpcio-tools
 motor
 pydantic
 python-dotenv
-uvloop
+uvloop; sys_platform != "win32"

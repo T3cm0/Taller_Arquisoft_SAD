@@ -1,5 +1,8 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongo:27017")
 DB_NAME = os.getenv("MONGO_DB", "wishlistdb")

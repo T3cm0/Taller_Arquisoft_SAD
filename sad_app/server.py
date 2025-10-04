@@ -2,12 +2,18 @@ import asyncio
 import os
 import time
 import uuid
-import uvloop
 import grpc
 
-from generated import wishlist_pb2 as pb
-from generated import wishlist_pb2_grpc as pb_grpc
-from db import get_db
+from .generated import wishlist_pb2 as pb
+from .generated import wishlist_pb2_grpc as pb_grpc
+from .db import get_db
+
+from dotenv import load_dotenv
+load_dotenv()
+
+from sad_app.generated import wishlist_pb2 as pb
+from sad_app.generated import wishlist_pb2_grpc as pb_grpc
+from sad_app.db import get_db
 
 class DataAdminService(pb_grpc.DataAdminServiceServicer):
     async def Ping(self, request, context):
@@ -121,11 +127,19 @@ class DataAdminService(pb_grpc.DataAdminServiceServicer):
 async def serve():
     server = grpc.aio.server()
     pb_grpc.add_DataAdminServiceServicer_to_server(DataAdminService(), server)
+
     port = os.getenv("SAD_PORT", "50051")
     server.add_insecure_port(f"[::]:{port}")
+
     await server.start()
     print(f"[SAD] gRPC escuchando en {port}")
     await server.wait_for_termination()
 
 if __name__ == "__main__":
-    uvloop.run(serve())
+    try:
+        import uvloop
+        uvloop.run(serve())   # Linux/macOS
+    except Exception:
+        import asyncio
+        asyncio.run(serve())  # Windows u otro entorno sin uvloop
+
